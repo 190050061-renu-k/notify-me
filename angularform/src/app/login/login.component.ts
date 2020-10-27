@@ -21,18 +21,18 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.profileForm = this.fb.group({
-      Username: ['',Validators.required],
-      Email: ['',[Validators.required,Validators.email]],
-      Password: ['',Validators.required],
+      username: ['',Validators.required],
+      email: ['',[Validators.required,Validators.email]],
+      password: ['',Validators.required],
     });
   }
   info: Forminfo;
 
   updateProfile() {
     this.profileForm.patchValue({
-      Username: '',
-      Email: '',
-      Password: '',
+      username: '',
+      email: '',
+      password: '',
     });
   }
 
@@ -47,9 +47,10 @@ export class LoginComponent implements OnInit {
         this.updateProfile();
       }
     );
-  
+  /*
    this.updateProfile();
-   this._router.navigate(['/dashboard']); 
+   this._router.navigate(['/dashboard']); */
+   
   } 
   
 }
