@@ -1,0 +1,16 @@
+<br>
+<nav>
+  <a routerLink="/dashboard">Dashboard</a>
+</nav>
+<br>
+<h3>COURSES</h3>
+
+<div class="grid grid-pad">
+  
+  <a *ngFor="let course of allcourses" class="col-1-4"
+      routerLink="/detail/{{course.coursecode}}">
+    <div class="module course">
+      <h4>{{course.coursecode}}</h4>
+    </div>
+  </a>
+</div>
