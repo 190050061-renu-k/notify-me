@@ -47,9 +47,9 @@ export class LoginComponent implements OnInit {
         this.updateProfile();
       }
     );
-  /*
+  
    this.updateProfile();
    this._router.navigate(['/dashboard']); 
-  } */
+  } 
   
 }
