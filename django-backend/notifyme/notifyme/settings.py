@@ -54,7 +54,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ORIGIN_WHITELIST = [
-    'https://localhost:4200/',
+    'http://localhost:4200',
 ]
 
 ROOT_URLCONF = 'notifyme.urls'
@@ -126,3 +126,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+APPEND_SLASH=False
