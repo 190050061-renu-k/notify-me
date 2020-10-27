@@ -4,12 +4,16 @@
       <label >Username</label>
       <input formControlName="Username" >
       <br>
+      <label >Email</label>
+      &nbsp; &nbsp; &nbsp;
+      <input formControlName="Email">
+      <br>
       <label >Password</label>
       <input formControlName="Password">
       <br> <br> 
-      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
       <button type="submit" [disabled]="!profileForm.valid" (click)="onSubmit()">Sign In</button>
-      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
       <button type="submit" [disabled]="!profileForm.valid" (click)="onSubmit()">Sign Up</button>
     </form></div>
-<!-- <router-outlet></router-outlet> -->
+ <router-outlet></router-outlet> 
