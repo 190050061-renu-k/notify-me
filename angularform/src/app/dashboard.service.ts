@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { CookieService } from 'ngx-cookie-service';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 
 @Injectable({
@@ -7,15 +6,25 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 })
 export class DashboardService {
 
-  constructor(private http: HttpClient, private cookie:CookieService){}
+  constructor(private http: HttpClient){
+  
+      }
   private httpOptions;
+  
   list() {
-  	this.httpOptions = {
-      headers: new HttpHeaders({
+    this.httpOptions = {headers: new HttpHeaders({
         'Content-Type': 'application/json',
-        'Authorization': 'JWT ' + this.cookie.get("JWT")
-      })
-	};
-  return this.http.get('http://127.0.0.1:8000/dashboardapi/courses', this.httpOptions);
+        'Authorization': 'JWT ' + localStorage.getItem("JWT")
+    })
+  };
+    return this.http.get('http://127.0.0.1:8000/dashboardapi/courses', this.httpOptions);
+  }
+  create(data){
+    this.httpOptions = {headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'JWT ' + localStorage.getItem("JWT")
+    })
+  };
+    return this.http.post('http://127.0.0.1:8000/dashboardapi/courses', data, this.httpOptions);
   }
 }

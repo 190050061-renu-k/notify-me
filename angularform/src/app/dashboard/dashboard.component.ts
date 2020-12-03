@@ -32,4 +32,7 @@ export class DashboardComponent implements OnInit {
 		this.configservice.logout();
 		this.router.navigate(['/login']);
 	}
+	create(){
+		this.router.navigate(['/createcourse']);
+	}
 }

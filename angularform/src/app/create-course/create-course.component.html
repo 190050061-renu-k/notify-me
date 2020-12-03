@@ -1,0 +1,9 @@
+<form [formGroup]="createform">
+	<label >Course Code</label>
+	<input formControlName="code"><br>
+	<label >Course Name</label>
+	<input formControlName="name">
+	<br>
+
+	<button type="button" [disabled]="!createform.valid" (click)="create()">Create Course</button>
+</form>
