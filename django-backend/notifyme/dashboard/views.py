@@ -2,9 +2,6 @@ from django.contrib.auth.models import User
 from rest_framework import viewsets, permissions
 from . import serializers
 from .models import Course, Deadline
-from .serializers import CourseSerializer
-from django.http.response import JsonResponse, HttpResponse
-import jwt
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -17,7 +14,8 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class CourseViewSet(viewsets.ModelViewSet):
-    queryset = Course.objects.all()
+    def get_queryset(self):
+        return Course.objects.filter(user=self.request.user)
     serializer_class = serializers.CourseSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
@@ -32,14 +30,3 @@ class DeadlineViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(course=self.request.course)
-
-
-def CourseView(request):
-    try:
-        headers = request.headers
-        user = jwt.decode(headers['Authorization'][4:], verify=False)
-        courses = Course.objects.filter(user=User.objects.all()[user['user_id'] - 1])
-        course_serializer = CourseSerializer(courses, many=True)
-        return JsonResponse(course_serializer.data, safe=False)
-    except:
-        return HttpResponse("Please Login Again")

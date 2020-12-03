@@ -4,10 +4,10 @@ from django.utils import timezone
 
 
 class Course(models.Model):
+    code = models.CharField(default='', max_length=10, primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateTimeField(default=timezone.now)
     name = models.CharField(default='', max_length=100)
-    code = models.CharField(default='', max_length=10)
 
     def __str__(self):
         return self.name

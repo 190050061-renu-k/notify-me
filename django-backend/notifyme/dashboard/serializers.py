@@ -19,7 +19,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Course
-        fields = ('id', 'user', 'date', 'name')
+        fields = ('code', 'user', 'date', 'name')
 
 
 class DeadlineSerializer(serializers.ModelSerializer):
