@@ -36,9 +36,9 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  onSubmit() {
+  register() {
     
-    this.configService.addinfo(this.profileForm.value).subscribe(
+    this.configService.register(this.profileForm.value).subscribe(
       data => {
         this.updateProfile();
         this._router.navigate(['/dashboard']);
@@ -47,10 +47,13 @@ export class LoginComponent implements OnInit {
         this.updateProfile();
       }
     );
+  }
+  login(){
+    this.configService.login(this.profileForm.value);
+    
+  }
   /*
    this.updateProfile();
    this._router.navigate(['/dashboard']); */
    
-  } 
-  
-}
+  }

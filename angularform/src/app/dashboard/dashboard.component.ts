@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Course } from '../course'
+import { Course } from '../course';
+import {DashboardService} from '../dashboard.service';
+import {ConfigService} from'../config.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -8,11 +11,25 @@ import { Course } from '../course'
 })
 export class DashboardComponent implements OnInit {
  
-  allcourses: Course[] = [{name:"DSA",coursecode:"CS 213"},{name:"DAI",coursecode:"CS 215"},{name:"DS",coursecode:"CS 207"}];
+	courses;
+	constructor(private dashboardService: DashboardService, private configservice:ConfigService, private router:Router) { }
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+	ngOnInit(): void {
+		this.getCourses();
+	}
+	getCourses(){
+		this.dashboardService.list().subscribe(
+			data=>{
+				this.courses=data;
+			},
+			err=>{
+				console.log(err);
+			},
+			() => {console.log('done loading posts');}
+		);
+	}
+	logout(){
+		this.configservice.logout();
+		this.router.navigate(['/login']);
+	}
 }

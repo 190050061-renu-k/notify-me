@@ -1,6 +1,6 @@
 <br><br><br>
 <div >
-    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="profileForm">
       <label >Username</label>
       <input formControlName="username" >
       <br>
@@ -9,11 +9,11 @@
       <input formControlName="email">
       <br>
       <label >Password</label>
-      <input formControlName="password">
+      <input formControlName="password" type="password">
       <br> <br> 
       &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-      <button type="button" [disabled]="!profileForm.valid" (click)="onSubmit()">Sign In</button>
+      <button type="button" [disabled]="!profileForm.valid" (click)="login()">Sign In</button>
       &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-      <button type="button" [disabled]="!profileForm.valid" (click)="onSubmit()">Sign Up</button>
+      <button type="button" [disabled]="!profileForm.valid" (click)="register()">Sign Up</button>
     </form></div>
  <router-outlet></router-outlet> 
