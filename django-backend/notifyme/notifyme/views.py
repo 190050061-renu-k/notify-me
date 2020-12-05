@@ -1,6 +1,7 @@
 import jwt
 from django.contrib.auth import user_logged_in
-from rest_framework import status
+from django.views.decorators.csrf import csrf_protect
+from rest_framework import status, exceptions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import AllowAny
@@ -44,7 +45,7 @@ def authenticate_user(request):
                 }
                 user_logged_in.send(sender=user.__class__,
                                     request=request, user=user)
-
+                user.is_active=True
                 return response
 
             except Exception as e:
@@ -57,3 +58,26 @@ def authenticate_user(request):
         res = {'error': 'please provide correct email and a password'}
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def refresh_token_view(request):
+
+    refresh_token = request.COOKIES.get('refresh_token')
+    if refresh_token is None:
+        raise exceptions.AuthenticationFailed(
+            'Authentication credentials were not provided.')
+    try:
+        payload = jwt.decode(
+            refresh_token, 'REFRESH_TOKEN_SECRET', algorithms=['HS256'])
+    except jwt.ExpiredSignatureError:
+        raise exceptions.AuthenticationFailed(
+            'expired refresh token, please login again.')
+
+    user = User.objects.filter(id=payload.get('user_id')).first()
+    if user is None:
+        raise exceptions.AuthenticationFailed('User not found')
+
+
+    access_token= jwt.encode(jwt_payload_handler(user), 'SECRET', algorithm='HS256')
+
+    return Response({'token': access_token})

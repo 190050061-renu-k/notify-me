@@ -39,7 +39,7 @@ export class ConfigService {
 	    );
 	}
 	public refreshToken() {
-	    this.http.post('http://127.0.0.1:8000/api-token-refresh/', JSON.stringify({token: localStorage.getItem("JWT")}), this.httpOptions).subscribe(
+	    this.http.post('http://127.0.0.1:8000/refresh/', this.httpOptions).subscribe(
 	      data => {
 	        this.updateData(data['token']);
 	      },
