@@ -48,14 +48,13 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+        'notifyme.authentication.TokenAuthentication',
     ),
 }
 JWT_AUTH = {
     'JWT_ALLOW_REFRESH': True,
     'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=3600),
+    'JWT_AUTH_HEADER_PREFIX': 'JWT',
 }
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -105,7 +104,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
+AUTH_USER_MODEL='dashboard.User'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators

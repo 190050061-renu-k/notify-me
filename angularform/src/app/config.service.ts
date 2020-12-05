@@ -20,16 +20,19 @@ export class ConfigService {
 		};
 	}
 
-	public register(user: Forminfo): Observable<Forminfo> {
-		return this.http.post<Forminfo>('http://127.0.0.1:8000/dashboardapi/users', user);
+	public register(user): Observable<Forminfo> {
+		return this.http.post<Forminfo>('http://127.0.0.1:8000/dashboardapi/instructors', user);
 	}
 	public login(user){
-		this.http.post('http://127.0.0.1:8000/api-token-auth/', JSON.stringify(user), this.httpOptions).subscribe(
+		user['is_instructor']=true
+		user['is_student']=false
+		this.http.post('http://127.0.0.1:8000/login/', user, this.httpOptions).subscribe(
 	    	data => {
 	    		this.updateData(data['token']);
 	    		this._router.navigate(['/dashboard']);
 	      	},
 	      	err => {
+	      		console.log(err);
 	        	this.errors = err['error'];
 	        	alert("Wrong Credentials!");
 	      	}
