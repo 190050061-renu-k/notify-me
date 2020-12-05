@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework_jwt.serializers import jwt_payload_handler
 from dashboard.models import User
 from . import settings
+import datetime
 
 
 
@@ -18,12 +19,10 @@ def authenticate_user(request):
         username = request.data['username']
         email = request.data['email']
         password = request.data['password']
-        is_student=request.data['is_student']
-        is_instructor=request.data['is_instructor']
+        is_student = request.data['is_student']
+        is_instructor = request.data['is_instructor']
         print(request.data)
-        #print("entered")
         user = User.objects.get(username=username, email=email, is_student=is_student, is_instructor=is_instructor)
-        print(user.username)
         if not user.check_password(password):
             raise ValidationError
         if user:
@@ -31,12 +30,22 @@ def authenticate_user(request):
                 payload = jwt_payload_handler(user)
                 print(payload)
                 token = jwt.encode(payload, 'SECRET', algorithm='HS256')
-                user_details = {}
-                user_details['name'] = user.username
-                user_details['token'] = token
+                response=Response()
+                refresh_token_payload={
+                    'user_id':user.id,
+                    'exp':datetime.datetime.utcnow()+datetime.timedelta(days=7),
+                    'iat': datetime.datetime.utcnow()
+                }
+                refresh_token=jwt.encode(refresh_token_payload, 'REFRESH_TOKEN_SECRET').decode('utf-8')
+                response.set_cookie(key='refresh_token', value=refresh_token, httponly=True)
+                response.data={
+                    'token': token,
+                    'user': user.username,
+                }
                 user_logged_in.send(sender=user.__class__,
                                     request=request, user=user)
-                return Response(user_details, status=status.HTTP_200_OK)
+
+                return response
 
             except Exception as e:
                 raise e
