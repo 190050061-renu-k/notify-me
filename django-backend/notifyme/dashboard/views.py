@@ -77,10 +77,8 @@ class CourseViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
 
     def perform_create(self, serializer):
-        print(serializer)
-        ins=Instructor.get(user=self.request.user)
 
-        serializer.save(instructor=ins)
+        serializer.save(instructor=Instructor.objects.get(user=self.request.user))
 
 
 class DeadlineViewSet(viewsets.ModelViewSet):

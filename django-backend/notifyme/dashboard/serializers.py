@@ -30,7 +30,7 @@ class InstructorSerializer(serializers.ModelSerializer):
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    students = serializers.StringRelatedField(many=True)
+    students = serializers.StringRelatedField(many=True, required=False)
     instructor = serializers.StringRelatedField(many=False)
 
     class Meta:

@@ -64,7 +64,7 @@ class Instructor(models.Model):
 
 class Course(models.Model):
     code = models.CharField(default='', max_length=10, primary_key=True)
-    instructor = models.OneToOneField(Instructor, on_delete=models.CASCADE)
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
     students = models.ManyToManyField(Student, blank=True)
     date = models.DateTimeField(default=timezone.now)
     name = models.CharField(default='', max_length=100)
