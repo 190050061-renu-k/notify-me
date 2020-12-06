@@ -13,12 +13,9 @@ class TokenAuthentication(BaseAuthentication):
         return User
 
     def authenticate(self, request):
-        print('entered')
         auth = get_authorization_header(request).split()
-        print(auth)
         if not auth or auth[0].lower() != b'bearer':
             return None
-        print(auth[1])
         if len(auth) == 1:
             msg = 'Invalid token header. No credentials provided.'
             raise exceptions.AuthenticationFailed(msg)

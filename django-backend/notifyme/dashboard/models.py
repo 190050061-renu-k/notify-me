@@ -75,9 +75,11 @@ class Course(models.Model):
 
 
 class Deadline(models.Model):
-    course = models.OneToOneField(Course, on_delete=models.CASCADE)
-    date = models.DateTimeField(default=timezone.now)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    start_date = models.DateTimeField(default=timezone.now)
+    end_date=models.DateTimeField()
     message = models.CharField(default='', max_length=500)
+    hard=models.BooleanField(default=False)
 
     def __str__(self):
         return self.message

@@ -44,4 +44,4 @@ class DeadlineSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Deadline
-        fields = ('id', 'course', 'date', 'message')
+        fields = ('id', 'course', 'start_date', 'end_date', 'message', 'hard')

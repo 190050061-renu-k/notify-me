@@ -11,7 +11,7 @@ from .models import Course, Deadline, User, Instructor, Student
 
 
 class CreateUserViewSet(viewsets.ModelViewSet):
-    queryset=User.objects.all()
+    queryset = User.objects.all()
     permission_classes = (AllowAny,)
     serializer_class = serializers.UserSerializer
 
@@ -30,11 +30,11 @@ class InstructorViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         print(self.request.data)
-        username=self.request.data['username']
-        email=self.request.data['email']
-        password=self.request.data['password']
+        username = self.request.data['username']
+        email = self.request.data['email']
+        password = self.request.data['password']
         user = User.objects.create_user(username=username, email=email, password=password)
-        user.is_instructor=True
+        user.is_instructor = True
         user.save()
         instructor = Instructor(user=user)
         instructor.save()
@@ -44,8 +44,8 @@ class InstructorViewSet(viewsets.ModelViewSet):
 class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = serializers.StudentSerializer
-    permission_classes_by_action = {'create':[AllowAny],
-                          'get_queryset':[permissions.IsAuthenticated]}
+    permission_classes_by_action = {'create': [AllowAny],
+                                    'get_queryset': [permissions.IsAuthenticated]}
 
     def get_permissions(self):
         try:
@@ -69,7 +69,9 @@ class StudentViewSet(viewsets.ModelViewSet):
 
 class CourseViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
-        return ( Course.objects.filter(students__in=[self.request.user.id])|Course.objects.filter(instructor_id=self.request.user.id))
+        return (Course.objects.filter(students__in=[self.request.user.id]) | Course.objects.filter(
+            instructor_id=self.request.user.id))
+
     serializer_class = serializers.CourseSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
@@ -77,49 +79,37 @@ class CourseViewSet(viewsets.ModelViewSet):
         print(serializer.save(instructor=Instructor.objects.get(user=self.request.user)))
 
     def perform_update(self, serializer):
-        user_instance=serializer.instance
+        user_instance = serializer.instance
         user_instance.students.add(student_id=self.request.user.id)
         user_instance.save()
 
 
 class DeadlineViewSet(viewsets.ModelViewSet):
-    queryset = Deadline.objects.all()
+    def get_queryset(self):
+        course = Course.objects.get(code=json.loads(self.request.body.decode('utf-8'))["code"])
+        return Deadline.objects.filter(course=course)
+
     serializer_class = serializers.DeadlineSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def perform_create(self, serializer):
-        serializer.save(course=self.request.course)
+        course = Course.objects.get(code=self.request.data['code'])
+        serializer.save(course=course, message=self.request.data['message'], hard=self.request.data['hard'],
+                        end_date=self.request.data['date'])
+
 
 @csrf_exempt
 @api_view(('POST',))
 @renderer_classes((JSONRenderer,))
 def updateCourse(request):
     try:
-        code=json.loads(request.body.decode('utf-8'))['code']
-        token=request.headers['Authorization'][7:]
-        user=jwt.decode(token, verify=False)
-        course=Course.objects.get(code=code)
-        student=Student.objects.get(user_id=user['user_id'])
+        code = json.loads(request.body.decode('utf-8'))['code']
+        token = request.headers['Authorization'][7:]
+        user = jwt.decode(token, verify=False)
+        course = Course.objects.get(code=code)
+        student = Student.objects.get(user_id=user['user_id'])
         course.students.add(student)
         course.save()
         return Response(data=None, status=status.HTTP_200_OK)
     except:
         return Response(data=None, status=status.HTTP_401_UNAUTHORIZED)
-
-"""
-@csrf_exempt
-def addStudent(request):
-    try:
-        #headers=request.headers
-        #print(headers['Authorization'][7:])
-        #user=jwt.decode(headers['Authorization'][7:], verify=False)
-        print(request.body.decode('utf-8'))
-        #course=Course.objects.get(code=json.loads(request.body.decode('utf-8'))['code'])
-        #course.students.add(student_id=user.id)
-        #course.save()
-        return HttpResponse("Not")
-    except:
-        return HttpResponse("Entered")
-    #print(request.body.decode('utf-8')['code'])
-#    course.students.add(student_id=request.user.id)
-"""

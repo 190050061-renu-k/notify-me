@@ -1,6 +1,5 @@
 import jwt
 from django.contrib.auth import user_logged_in
-from django.views.decorators.csrf import csrf_protect
 from rest_framework import status, exceptions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import ValidationError
@@ -8,7 +7,6 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_jwt.serializers import jwt_payload_handler
 from dashboard.models import User, Student
-from . import settings
 import datetime
 
 
