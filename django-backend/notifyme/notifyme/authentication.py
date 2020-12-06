@@ -16,7 +16,7 @@ class TokenAuthentication(BaseAuthentication):
         print('entered')
         auth = get_authorization_header(request).split()
         print(auth)
-        if not auth or auth[0].lower() != b'jwt':
+        if not auth or auth[0].lower() != b'bearer':
             return None
         print(auth[1])
         if len(auth) == 1:
@@ -38,7 +38,7 @@ class TokenAuthentication(BaseAuthentication):
         return self.authenticate_credentials(token)
 
     def authenticate_credentials(self, token):
-        model = self.get_model()
+        #model = self.get_model()
         payload = jwt.decode(token, "SECRET")
         username = payload['username']
         userid = payload['user_id']

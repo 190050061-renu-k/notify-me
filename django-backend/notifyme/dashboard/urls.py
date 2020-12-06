@@ -14,4 +14,5 @@ router.register(r'students', views.StudentViewSet)
 urlpatterns = [
 #    path(r'api/courses', views.CourseVie),
     path(r'api/', include(router.urls)),
+    path(r'api/add', views.updateCourse)
 ]

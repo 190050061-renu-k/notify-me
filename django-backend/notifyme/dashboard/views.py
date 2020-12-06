@@ -1,15 +1,17 @@
-import jwt
-from django.contrib.auth import user_logged_in
-from django.shortcuts import redirect
-from rest_framework import viewsets, permissions, status
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
-from rest_framework_jwt.serializers import jwt_payload_handler
+import json
 
+import jwt
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework import viewsets, permissions, status, exceptions
+from rest_framework.decorators import renderer_classes, api_view
+from rest_framework.permissions import AllowAny
+from rest_framework.renderers import JSONRenderer
+from rest_framework.response import Response
+from django.contrib.auth.decorators import login_required
 from . import serializers
 from .models import Course, Deadline, User, Instructor, Student
-
+from rest_framework.generics import UpdateAPIView
 
 
 class CreateUserViewSet(viewsets.ModelViewSet):
@@ -77,8 +79,12 @@ class CourseViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
 
     def perform_create(self, serializer):
+        print(serializer.save(instructor=Instructor.objects.get(user=self.request.user)))
 
-        serializer.save(instructor=Instructor.objects.get(user=self.request.user))
+    def perform_update(self, serializer):
+        user_instance=serializer.instance
+        user_instance.students.add(student_id=self.request.user.id)
+        user_instance.save()
 
 
 class DeadlineViewSet(viewsets.ModelViewSet):
@@ -88,3 +94,37 @@ class DeadlineViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(course=self.request.course)
+
+@csrf_exempt
+@api_view(('POST',))
+@renderer_classes((JSONRenderer,))
+def updateCourse(request):
+    try:
+        code=json.loads(request.body.decode('utf-8'))['code']
+        token=request.headers['Authorization'][7:]
+        user=jwt.decode(token, verify=False)
+        course=Course.objects.get(code=code)
+        student=Student.objects.get(user_id=user['user_id'])
+        course.students.add(student)
+        course.save()
+        return Response(data=None, status=status.HTTP_200_OK)
+    except:
+        return Response(data=None, status=status.HTTP_401_UNAUTHORIZED)
+
+"""
+@csrf_exempt
+def addStudent(request):
+    try:
+        #headers=request.headers
+        #print(headers['Authorization'][7:])
+        #user=jwt.decode(headers['Authorization'][7:], verify=False)
+        print(request.body.decode('utf-8'))
+        #course=Course.objects.get(code=json.loads(request.body.decode('utf-8'))['code'])
+        #course.students.add(student_id=user.id)
+        #course.save()
+        return HttpResponse("Not")
+    except:
+        return HttpResponse("Entered")
+    #print(request.body.decode('utf-8')['code'])
+#    course.students.add(student_id=request.user.id)
+"""
