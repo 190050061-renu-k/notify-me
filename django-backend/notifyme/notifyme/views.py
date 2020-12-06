@@ -7,7 +7,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_jwt.serializers import jwt_payload_handler
-from dashboard.models import User
+from dashboard.models import User, Student
 from . import settings
 import datetime
 
@@ -24,6 +24,8 @@ def authenticate_user(request):
         is_instructor = request.data['is_instructor']
         print(request.data)
         user = User.objects.get(username=username, email=email, is_student=is_student, is_instructor=is_instructor)
+        if is_student:
+            Student.objects.get(user=user).registration_token=request.data['registration_token']
         if not user.check_password(password):
             raise ValidationError
         if user:

@@ -50,6 +50,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name="student_account")
+    registration_token=models.CharField(max_length=400, blank=True)
 
     def __str__(self):
         return self.user.username
