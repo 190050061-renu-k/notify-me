@@ -25,7 +25,9 @@ def authenticate_user(request):
         print(request.data)
         user = User.objects.get(username=username, email=email, is_student=is_student, is_instructor=is_instructor)
         if is_student:
-            Student.objects.get(user=user).registration_token=request.data['registration_token']
+            student=Student.objects.get(user=user)
+            student.registration_token=request.data['registration_token']
+            student.save()
         if not user.check_password(password):
             raise ValidationError
         if user:
