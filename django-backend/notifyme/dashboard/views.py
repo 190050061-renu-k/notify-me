@@ -1,21 +1,16 @@
 import json
-
 import jwt
-from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework import viewsets, permissions, status, exceptions
+from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import renderer_classes, api_view
 from rest_framework.permissions import AllowAny
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
-from django.contrib.auth.decorators import login_required
 from . import serializers
 from .models import Course, Deadline, User, Instructor, Student
-from rest_framework.generics import UpdateAPIView
 
 
 class CreateUserViewSet(viewsets.ModelViewSet):
-    # Allow any user (authenticated or not) to access this url
     queryset=User.objects.all()
     permission_classes = (AllowAny,)
     serializer_class = serializers.UserSerializer
