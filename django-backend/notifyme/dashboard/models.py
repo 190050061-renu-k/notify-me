@@ -34,14 +34,17 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=40, unique=True)
-    username = models.CharField(max_length=30, unique=True)
-    is_active = models.BooleanField(default=False)
+    username = models.CharField(max_length=60, blank=True, unique=True)
+    first_name = models.CharField(max_length=30, blank=True)
+    last_name = models.CharField(max_length=30, blank=True)
+    is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_student = models.BooleanField(default=False)
     is_instructor = models.BooleanField(default=False)
+    date_joined=models.DateField(default=timezone.now)
     objects = UserManager()
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['is_student','is_instructor']
+    REQUIRED_FIELDS = ['email']
 
     def save(self, *args, **kwargs):
         super(User, self).save(*args, **kwargs)
@@ -49,7 +52,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Student(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name="student_account")
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name="student_account", default=User.objects.filter(is_student="True"))
     registration_token=models.CharField(max_length=400, blank=True)
 
     def __str__(self):

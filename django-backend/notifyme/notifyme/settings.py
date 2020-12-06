@@ -50,6 +50,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'notifyme.authentication.TokenAuthentication',
     ),
+    'DATE_INPUT_FORMATS': ['iso-8601', '%Y-%m-%dT%H:%M:%S.%fZ'],
 }
 JWT_AUTH = {
     'JWT_ALLOW_REFRESH': True,
@@ -73,6 +74,8 @@ CORS_ORIGIN_ALLOW_ALL=False
 CORS_ORIGIN_WHITELIST = (
        'http://localhost:4200',
 )
+
+
 
 ROOT_URLCONF = 'notifyme.urls'
 
@@ -144,3 +147,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 APPEND_SLASH=False
+
+AUTHENTICATION_BACKENDS = ['notifyme.authentication.AuthenticationBackend',]

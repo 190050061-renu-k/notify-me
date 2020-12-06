@@ -42,7 +42,9 @@ class InstructorViewSet(viewsets.ModelViewSet):
 
 
 class StudentViewSet(viewsets.ModelViewSet):
-    queryset = Student.objects.all()
+    def get_queryset(self):
+        course = Course.objects.get(code=self.request.GET['code'])
+        return course.students.all()
     serializer_class = serializers.StudentSerializer
     permission_classes_by_action = {'create': [AllowAny],
                                     'get_queryset': [permissions.IsAuthenticated]}
@@ -86,16 +88,16 @@ class CourseViewSet(viewsets.ModelViewSet):
 
 class DeadlineViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
-        course = Course.objects.get(code=json.loads(self.request.body.decode('utf-8'))["code"])
-        return Deadline.objects.filter(course=course)
+        course = Course.objects.get(code=self.request.GET['code'])
+        return Deadline.objects.filter(course=course).order_by('-end_date')
 
     serializer_class = serializers.DeadlineSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def perform_create(self, serializer):
-        course = Course.objects.get(code=self.request.data['code'])
+        course = Course.objects.get(code=self.request.GET['code'])
         serializer.save(course=course, message=self.request.data['message'], hard=self.request.data['hard'],
-                        end_date=self.request.data['date'])
+                        end_date=self.request.data['end_date'])
 
 
 @csrf_exempt

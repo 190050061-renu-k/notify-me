@@ -8,7 +8,7 @@ router.register(r'users', views.CreateUserViewSet)
 router.register(r'courses', views.CourseViewSet, basename='courses')
 router.register(r'deadlines', views.DeadlineViewSet, basename='deadlines')
 router.register(r'instructors', views.InstructorViewSet)
-router.register(r'students', views.StudentViewSet)
+router.register(r'students', views.StudentViewSet, basename='students')
 
 urlpatterns = [
     path(r'api/', include(router.urls)),
