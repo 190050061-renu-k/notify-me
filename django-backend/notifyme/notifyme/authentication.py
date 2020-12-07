@@ -1,7 +1,8 @@
 import jwt
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from rest_framework.authentication import get_authorization_header, BaseAuthentication
 from rest_framework import exceptions
+from .settings import SECRET_KEY
 
 from dashboard.models import User
 
@@ -36,23 +37,24 @@ class TokenAuthentication(BaseAuthentication):
 
     def authenticate_credentials(self, token):
         #model = self.get_model()
-        payload = jwt.decode(token, "SECRET")
-        username = payload['username']
-        userid = payload['user_id']
-        msg = {'Error': "Token mismatch", 'status': "401"}
         try:
+            payload = jwt.decode(token, SECRET_KEY, verify=False)
+            username = payload['username']
+            userid = payload['user_id']
+            msg = {'Error': "Token mismatch", 'status': "401"}
+
 
             user = User.objects.get(
                 username=username,
                 id=userid
             )
 
-            #if not user.token['token'] ==:
+            #if not user.token['token'] ==token:
              #   raise exceptions.AuthenticationFailed(msg)
 
         except jwt.ExpiredSignature or jwt.DecodeError or jwt.InvalidTokenError:
             print("expired")
-            return HttpResponse({'Error': "Token is invalid"}, status="403")
+            return JsonResponse({'Error': "Token is invalid"}, status="403")
         except User.DoesNotExist:
             print("does not exist")
             return HttpResponse({'Error': "Internal server error"}, status="500")

@@ -1,0 +1,13 @@
+<form [formGroup]="createform">
+	<label >Message</label>
+	<input formControlName="message"><br>
+	<label >Priority</label>
+	<input formControlName="hard" type="radio" value="True">Hard
+	<input formControlName="hard" type="radio" value="False">Soft
+	<br>
+	<label>Choose a date</label>
+	<input matInput [matDatepicker]="picker" formControlName="end_date">
+	<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+	<mat-datepicker #picker></mat-datepicker><br>
+	<button type="button" [disabled]="!createform.valid" (click)="create()">Create Deadline</button>
+</form>

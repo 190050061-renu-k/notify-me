@@ -25,7 +25,7 @@ export class DashboardComponent implements OnInit {
 			err=>{
 				console.log(err);
 			},
-			() => {console.log('done loading posts');}
+			() => {console.log('done loading courses');}
 		);
 	}
 	logout(){

@@ -1,7 +1,35 @@
-<br>
-<!-- <form *ngIf="form" [formGroup]="form"> -->
-    Message:  <input type="text"><br>
-    <button>Send Notification</button>
-    <!-- <h1>{{form.value.message}}</h1> -->
-<!-- </form> -->
+<button (click)="create()">Create Deadline</button><br>
+Deadlines:
+<table mat-table [dataSource]="deadlines" class="mat-elevation-z8" width="100%">
+  <ng-container matColumnDef="message">
+    <th mat-header-cell *matHeaderCellDef> Message </th>
+    <td mat-cell *matCellDef="let deadline">{{deadline.message}}</td>
+  </ng-container>
 
+  <ng-container matColumnDef="end_date">
+    <th mat-header-cell *matHeaderCellDef> Date </th>
+    <td mat-cell *matCellDef="let deadline"> {{deadline.end_date| date:'yyyy-MM-dd HH:mm:ss'}} </td>
+  </ng-container>
+  <ng-container matColumnDef="delete">
+    <th mat-header-cell *matHeaderCellDef> Delete </th>
+    <td mat-cell *matCellDef="let deadline"><button (click)="deleteDeadline(deadline)">Delete</button> </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columns1"></tr>
+  <tr mat-row *matRowDef="let row; columns: columns1;"></tr>
+</table>
+<br>
+Students:
+<table mat-table [dataSource]="students" class="mat-elevation-z8" width="100%">
+  <ng-container matColumnDef="user">
+    <th mat-header-cell *matHeaderCellDef> Username </th>
+    <td mat-cell *matCellDef="let student"> {{student.user}} </td>
+  </ng-container>
+  <ng-container matColumnDef="delete">
+    <th mat-header-cell *matHeaderCellDef> Delete </th>
+    <td mat-cell *matCellDef="let student"><button (click)="removeStudent(student)"> Delete </button></td>
+  </ng-container>
+  
+    <tr mat-header-row *matHeaderRowDef="columns2"></tr>
+	<tr mat-row *matRowDef="let row; columns: columns2;"></tr>
+</table>

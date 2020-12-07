@@ -12,5 +12,7 @@ router.register(r'students', views.StudentViewSet, basename='students')
 
 urlpatterns = [
     path(r'api/', include(router.urls)),
-    path(r'api/addStudenttoCourse', views.updateCourse)
+    path(r'api/addStudenttoCourse', views.updateCourse),
+    path(r'api/deleteDeadline', views.deleteDeadline),
+    path(r'api/removeStudent', views.removeStudent),
 ]

@@ -8,6 +8,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from . import serializers
 from .models import Course, Deadline, User, Instructor, Student
+from datetime import datetime
 
 
 class CreateUserViewSet(viewsets.ModelViewSet):
@@ -89,6 +90,11 @@ class CourseViewSet(viewsets.ModelViewSet):
 class DeadlineViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         course = Course.objects.get(code=self.request.GET['code'])
+        if self.request.user.is_student:
+            if not Student.objects.get(user=self.request.user) in course.students.all():
+                return Course.objects.none()
+        if self.request.user.id!=course.instructor_id:
+            return Course.objects.none()
         return Deadline.objects.filter(course=course).order_by('-end_date')
 
     serializer_class = serializers.DeadlineSerializer
@@ -96,8 +102,10 @@ class DeadlineViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         course = Course.objects.get(code=self.request.GET['code'])
+        date=datetime.fromisoformat(self.request.data['end_date'][:-1]).strftime('%Y-%m-%d %H:%M:%S')
+        print(date)
         serializer.save(course=course, message=self.request.data['message'], hard=self.request.data['hard'],
-                        end_date=self.request.data['end_date'])
+                        end_date=date)
 
 
 @csrf_exempt
@@ -112,6 +120,39 @@ def updateCourse(request):
         student = Student.objects.get(user_id=user['user_id'])
         course.students.add(student)
         course.save()
+        return Response(data=None, status=status.HTTP_200_OK)
+    except:
+        return Response(data=None, status=status.HTTP_401_UNAUTHORIZED)
+
+
+@csrf_exempt
+@api_view(('POST',))
+@renderer_classes((JSONRenderer,))
+def deleteDeadline(request):
+    try:
+        print(request.body.decode('utf-8'))
+        id = json.loads(request.body.decode('utf-8'))['id']
+        token = request.headers['Authorization'][7:]
+        user = jwt.decode(token, verify=False)
+        deadline = Deadline.objects.get(id=id)
+        instructor=Instructor.objects.get(user_id=user['user_id'])
+        deadline.delete()
+        return Response(data=None, status=status.HTTP_200_OK)
+    except:
+        return Response(data=None, status=status.HTTP_401_UNAUTHORIZED)
+
+
+@csrf_exempt
+@api_view(('POST',))
+@renderer_classes((JSONRenderer,))
+def removeStudent(request):
+    try:
+        user = User.objects.get(username=json.loads(request.body.decode('utf-8'))['user'])
+        code = json.loads(request.body.decode('utf-8'))['code']
+        token = request.headers['Authorization'][7:]
+        instructor = jwt.decode(token, verify=False)
+        student = Student.objects.get(user=user)
+        Course.objects.get(code=code).students.remove(student)
         return Response(data=None, status=status.HTTP_200_OK)
     except:
         return Response(data=None, status=status.HTTP_401_UNAUTHORIZED)

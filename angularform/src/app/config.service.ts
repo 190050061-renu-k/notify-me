@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError, retry } from 'rxjs/operators';
+import { catchError, retry, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
 import { Forminfo } from './forminfo';
@@ -24,10 +24,10 @@ export class ConfigService {
 		return this.http.post<Forminfo>('http://127.0.0.1:8000/dashboardapi/instructors', user);
 	}
 	public login(user){
-		user['is_instructor']=true
-		user['is_student']=false
+		user['is_instructor']=true;
+		user['is_student']=false;
 		this.http.post('http://127.0.0.1:8000/login/', user, this.httpOptions).subscribe(
-	    	data => {
+			data => {
 	    		this.updateData(data['token']);
 	    		this._router.navigate(['/dashboard']);
 	      	},
@@ -39,14 +39,9 @@ export class ConfigService {
 	    );
 	}
 	public refreshToken() {
-	    this.http.post('http://127.0.0.1:8000/refresh/', this.httpOptions).subscribe(
-	      data => {
-	        this.updateData(data['token']);
-	      },
-	      err => {
-	        this.errors = err['error'];
-	      }
-	    );
+	    return this.http.post('http://127.0.0.1:8000/refresh/', this.httpOptions).pipe(tap((token) => {
+      this.updateData(token['token']);
+    }));
   	}
   	public logout() {
 	    localStorage.removeItem("JWT");
