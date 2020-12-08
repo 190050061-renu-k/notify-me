@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Course, Deadline, User, Student, Instructor
+from .models import Course, Deadline, User, Student, Instructor, Ta
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -27,6 +27,15 @@ class InstructorSerializer(serializers.ModelSerializer):
         model=Instructor
         fields=('user')
         fields = '__all__'
+
+
+class TaSerializer(serializers.ModelSerializer):
+    user=serializers.StringRelatedField(many=False)
+
+    class Meta:
+        model=Ta
+        fields=('user')
+        fields='__all__'
 
 
 class CourseSerializer(serializers.ModelSerializer):

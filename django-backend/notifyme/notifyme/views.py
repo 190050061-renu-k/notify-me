@@ -19,7 +19,9 @@ def authenticate_user(request):
         email=request.data['email']
         is_student = request.data['is_student']
         is_instructor = request.data['is_instructor']
-        user = User.objects.get(username=username, email=email, is_student=is_student, is_instructor=is_instructor)
+        is_ta = request.data['is_ta']
+        user = User.objects.get(username=username, email=email, is_student=is_student, is_instructor=is_instructor, is_ta=is_ta)
+        #print(is_ta, is_student, is_instructor)
         if is_student:
             student = Student.objects.get(user=user)
             student.registration_token = request.data['registration_token']

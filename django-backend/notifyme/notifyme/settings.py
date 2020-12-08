@@ -156,6 +156,6 @@ CELERY_TIMEZONE='Asia/Kolkata'
 CELERY_BEAT_SCHEDULE= {
     'send_notifications':{
         'task':'dashboard.tasks.send_notifications',
-        'schedule': 30.0
+        'schedule': 3600.0
     },
 }

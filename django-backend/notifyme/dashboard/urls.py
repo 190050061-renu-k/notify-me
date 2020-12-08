@@ -9,10 +9,13 @@ router.register(r'courses', views.CourseViewSet, basename='courses')
 router.register(r'deadlines', views.DeadlineViewSet, basename='deadlines')
 router.register(r'instructors', views.InstructorViewSet)
 router.register(r'students', views.StudentViewSet, basename='students')
+router.register(r'tas', views.TAViewSet, basename='tas')
 
 urlpatterns = [
     path(r'api/', include(router.urls)),
     path(r'api/addStudenttoCourse', views.updateCourse),
     path(r'api/deleteDeadline', views.deleteDeadline),
     path(r'api/removeStudent', views.removeStudent),
+    path(r'api/addTa', views.addTa),
+    path(r'api/removeTa', views.removeTa)
 ]
