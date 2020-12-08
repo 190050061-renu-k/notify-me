@@ -1,5 +1,5 @@
 <br>
-<button type="button" (click)="create()">Create Course</button>
+<button *ngIf="role=='instructor'" type="button" (click)="create()">Create Course</button>
 <br>
 <h3>COURSES</h3>
 
@@ -12,5 +12,3 @@
     </div>
   </a>
 </div>
-<br>
-<button type="button" (click)="logout()">Log Out</button>

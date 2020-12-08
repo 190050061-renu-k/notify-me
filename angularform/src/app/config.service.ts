@@ -21,14 +21,18 @@ export class ConfigService {
 	}
 
 	public register(user): Observable<Forminfo> {
-		return this.http.post<Forminfo>('http://127.0.0.1:8000/dashboardapi/instructors', user);
+		return this.http.post<Forminfo>('http://127.0.0.1:8000/dashboardapi/tas', user);
 	}
-	public login(user){
-		user['is_instructor']=true;
-		user['is_student']=false;
+	public login(user, role){
+		user['is_instructor']=user['is_ta']=user['is_student']=false;
+		if (role=="instructor"){
+			user['is_instructor']=true;
+		}
+		else user['is_ta']=true;
 		this.http.post('http://127.0.0.1:8000/login/', user, this.httpOptions).subscribe(
 			data => {
 	    		this.updateData(data['token']);
+	    		localStorage.setItem("Role", role);
 	    		this._router.navigate(['/dashboard']);
 	      	},
 	      	err => {

@@ -20,6 +20,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { CreateCourseComponent } from './create-course/create-course.component';
 import { DeadlinesComponent } from './deadlines/deadlines.component';
+import { AddTAComponent } from './add-ta/add-ta.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { DeadlinesComponent } from './deadlines/deadlines.component';
     HeaderComponent,
     LoginComponent,
     CreateCourseComponent,
-    DeadlinesComponent
+    DeadlinesComponent,
+    AddTAComponent
   ],
   imports: [
     BrowserModule,

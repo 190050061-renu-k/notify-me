@@ -10,12 +10,13 @@ import { Router } from '@angular/router';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
- 
+ 	role;
 	courses;
 	constructor(private dashboardService: DashboardService, private configservice:ConfigService, private router:Router) { }
 
 	ngOnInit(): void {
 		this.getCourses();
+		this.role=localStorage.getItem("Role");
 	}
 	getCourses(){
 		this.dashboardService.list().subscribe(
@@ -27,10 +28,6 @@ export class DashboardComponent implements OnInit {
 			},
 			() => {console.log('done loading courses');}
 		);
-	}
-	logout(){
-		this.configservice.logout();
-		this.router.navigate(['/login']);
 	}
 	create(){
 		this.router.navigate(['/createcourse']);

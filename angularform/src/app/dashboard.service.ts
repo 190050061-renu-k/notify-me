@@ -22,6 +22,9 @@ export class DashboardService {
   deadlinelist(code){
     return this.http.get('http://127.0.0.1:8000/dashboardapi/deadlines?code='+code);
   }
+  TAlist(code){
+    return this.http.get('http://127.0.0.1:8000/dashboardapi/tas?code='+code);
+  }
   deleteDeadline(data){
     return this.http.post('http://127.0.0.1:8000/dashboardapi/deleteDeadline', data);
   }
@@ -30,8 +33,13 @@ export class DashboardService {
   }
   createDeadline(data, code){
     data['date']=this.datePipe.transform(data['date'], "yyyy-MM-dd");
-    console.log(data['date']);
-    console.log(code);
     return this.http.post('http://127.0.0.1:8000/dashboardapi/deadlines?code='+code, data);
+  }
+  addTA(data, code){
+    data['code']=code;
+    return this.http.post('http://127.0.0.1:8000/dashboardapi/addTa', data);
+  }
+  removeTA(data){
+    return this.http.post('http://127.0.0.1:8000/dashboardapi/removeTa', data);
   }
 }

@@ -12,8 +12,9 @@
       <input formControlName="password" type="password">
       <br> <br> 
       &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-      <button type="button" [disabled]="!profileForm.valid" (click)="login()">Sign In</button>
+      <button type="button" [disabled]="!profileForm.valid" (click)="login('instructor')">Sign In as Instructor</button>
       &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-      <button type="button" [disabled]="!profileForm.valid" (click)="register()">Sign Up</button>
+      <button type="button" [disabled]="!profileForm.valid" (click)="login('ta')">Sign In as TA</button>
+      <button type="button" [disabled]="!profileForm.valid" (click)="register()">Sign Up as TA</button>
     </form></div>
  <router-outlet></router-outlet> 

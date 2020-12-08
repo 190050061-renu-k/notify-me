@@ -1,2 +1,3 @@
 <mat-toolbar><span>Notify Me</span>
+	<button *ngIf="loggedIn()" (click)="logout()" style="float:right;">Logout</button>
 </mat-toolbar>

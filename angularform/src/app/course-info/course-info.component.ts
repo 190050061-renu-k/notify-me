@@ -14,11 +14,14 @@ import { Router, ActivatedRoute } from '@angular/router';
   styleUrls: ['./course-info.component.scss']
 })
 export class CourseInfoComponent implements OnInit {
-  columns1:String[]=['message', 'end_date', 'delete'];
-  columns2:String[]=['user', 'delete'];
+  columns1:String[];
+  columns2:String[];
+  columns3:String[];
   deadlines;
   students;
+  tas;
   code:String;
+  role;
   constructor(private dashboardService: DashboardService, private router:Router, private activatedroute:ActivatedRoute){
   }
 
@@ -26,6 +29,17 @@ export class CourseInfoComponent implements OnInit {
   	this.code=this.activatedroute.snapshot.params['code'];
   	this.getStudents();
   	this.getDeadlines();
+    this.getTAs();
+    this.role=localStorage.getItem("Role");
+    if(this.role=="instructor"){
+      this.columns1=['message', 'end_date', 'delete'];
+      this.columns2=['user', 'delete'];
+      this.columns3=['TA', 'delete'];
+    }
+    else{
+      this.columns1=['message', 'end_date'];
+      this.columns2=['user'];
+    }
   }
 
   getStudents(){
@@ -50,6 +64,18 @@ export class CourseInfoComponent implements OnInit {
   		()=>{}
   	);
   }
+  getTAs(){
+    this.dashboardService.TAlist(this.code).subscribe(
+      data=>{
+        this.tas=data;
+        console.log(this.tas);
+      },
+      error=>{
+        console.log(error);
+      },
+      ()=>{}
+    );
+  }
   deleteDeadline(deadline){
     this.dashboardService.deleteDeadline({'id':deadline.id}).subscribe(
       data=>{
@@ -69,6 +95,19 @@ export class CourseInfoComponent implements OnInit {
         console.log("You are not authorized to delete the deadline");
       }
     );
+  }
+  removeTA(ta){
+    this.dashboardService.removeTA({'user':ta.user, 'code':this.code}).subscribe(
+      data=>{
+        this.getTAs();
+      },
+      error=>{
+        console.log("You are not authorized to remove the Student");
+      }
+    );
+  }
+  addTa(){
+    this.router.navigate(['/addTA/'+this.code]);
   }
   create(){
     this.router.navigate(['/createdeadline/'+this.code]);

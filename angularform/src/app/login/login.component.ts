@@ -49,9 +49,8 @@ export class LoginComponent implements OnInit {
       }
     );
   }
-  login(){
-    this.configService.login(this.profileForm.value);
-    
+  login(s){
+      this.configService.login(this.profileForm.value, s);
   }
   /*
    this.updateProfile();
