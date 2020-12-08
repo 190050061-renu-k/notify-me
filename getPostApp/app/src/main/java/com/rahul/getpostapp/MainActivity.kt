@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
                 val password = pass.text.toString()
                 val email = Email.text.toString()
 
-                    val signInModel = LoginModel(username, email, password, true, false, token)
+                    val signInModel = LoginModel(username, email, password, true,false, false, token)
                     val call: Call<LoginResponse> = apiinterface.loginUser(signInModel)
                     call.enqueue(object : Callback<LoginResponse> {
                         override fun onResponse(
