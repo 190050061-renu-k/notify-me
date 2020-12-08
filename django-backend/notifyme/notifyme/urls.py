@@ -1,8 +1,7 @@
 from django.urls import include, path
 from rest_framework import routers
 from django.contrib import admin
-from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
-from .views import authenticate_user, refresh_token_view
+from .views import authenticate_user, refresh_token_view, logout
 
 router = routers.DefaultRouter()
 #router.register(r'users', views.UserViewSet)
@@ -16,6 +15,5 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('login/', authenticate_user),
     path('refresh/', refresh_token_view),
-    path(r'api-token-auth/', obtain_jwt_token),
-    path(r'api-token-refresh/', refresh_jwt_token),
+    path('logout/', logout),
 ]

@@ -1,5 +1,6 @@
 import json
 import jwt
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import renderer_classes, api_view
@@ -9,6 +10,7 @@ from rest_framework.response import Response
 from . import serializers
 from .models import Course, Deadline, User, Instructor, Student
 from datetime import datetime
+from .tasks import send_notifications
 
 
 class CreateUserViewSet(viewsets.ModelViewSet):
@@ -39,7 +41,6 @@ class InstructorViewSet(viewsets.ModelViewSet):
         user.save()
         instructor = Instructor(user=user)
         instructor.save()
-        return Response(instructor, status=status.HTTP_201_CREATED)
 
 
 class StudentViewSet(viewsets.ModelViewSet):
@@ -52,10 +53,8 @@ class StudentViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         try:
-            # return permission_classes depending on `action`
             return [permission() for permission in self.permission_classes_by_action[self.action]]
         except KeyError:
-            # action is not set return default permission_classes
             return [permission() for permission in self.permission_classes]
 
     def perform_create(self, serializer):
@@ -67,7 +66,6 @@ class StudentViewSet(viewsets.ModelViewSet):
         user.save()
         student = Student(user=user)
         student.save()
-        return Response(student, status=status.HTTP_201_CREATED)
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -108,51 +106,44 @@ class DeadlineViewSet(viewsets.ModelViewSet):
                         end_date=date)
 
 
+
 @csrf_exempt
 @api_view(('POST',))
 @renderer_classes((JSONRenderer,))
 def updateCourse(request):
-    try:
         code = json.loads(request.body.decode('utf-8'))['code']
-        token = request.headers['Authorization'][7:]
-        user = jwt.decode(token, verify=False)
+        user=request.user
         course = Course.objects.get(code=code)
-        student = Student.objects.get(user_id=user['user_id'])
+        student = Student.objects.get(user_id=user.id)
         course.students.add(student)
         course.save()
-        return Response(data=None, status=status.HTTP_200_OK)
-    except:
-        return Response(data=None, status=status.HTTP_401_UNAUTHORIZED)
+        return Response(data=Course.filter(students__in=[user.id]), status=status.HTTP_200_OK)
 
 
 @csrf_exempt
 @api_view(('POST',))
-@renderer_classes((JSONRenderer,))
 def deleteDeadline(request):
+    user = request.user
+    id = json.loads(request.body.decode('utf-8'))['id']
+    deadline = Deadline.objects.get(id=id)
     try:
-        print(request.body.decode('utf-8'))
-        id = json.loads(request.body.decode('utf-8'))['id']
-        token = request.headers['Authorization'][7:]
-        user = jwt.decode(token, verify=False)
-        deadline = Deadline.objects.get(id=id)
-        instructor=Instructor.objects.get(user_id=user['user_id'])
+        instructor = Instructor.objects.get(user_id=user.id)
         deadline.delete()
         return Response(data=None, status=status.HTTP_200_OK)
     except:
-        return Response(data=None, status=status.HTTP_401_UNAUTHORIZED)
-
+        return Response(data=None, status=status.HTTP_403_FORBIDDEN)
 
 @csrf_exempt
 @api_view(('POST',))
 @renderer_classes((JSONRenderer,))
 def removeStudent(request):
     try:
+        instructor=Instructor.objects.get(user=request.user)
         user = User.objects.get(username=json.loads(request.body.decode('utf-8'))['user'])
-        code = json.loads(request.body.decode('utf-8'))['code']
-        token = request.headers['Authorization'][7:]
-        instructor = jwt.decode(token, verify=False)
         student = Student.objects.get(user=user)
-        Course.objects.get(code=code).students.remove(student)
-        return Response(data=None, status=status.HTTP_200_OK)
+        code = json.loads(request.body.decode('utf-8'))['code']
+        course=Course.objects.get(code=code)
+        course.students.remove(student)
+        return Response(data=course.students, status=status.HTTP_200_OK)
     except:
-        return Response(data=None, status=status.HTTP_401_UNAUTHORIZED)
+        return Response(data=course.students, status=status.HTTP_401_UNAUTHORIZED)

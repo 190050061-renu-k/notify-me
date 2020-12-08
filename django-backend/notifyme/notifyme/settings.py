@@ -26,7 +26,7 @@ SECRET_KEY = 'oj+bk*l72s8an8_ku=*s(!8g+cp57&4m+!f2(m038m@r30$&ca'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -149,3 +149,13 @@ STATIC_URL = '/static/'
 APPEND_SLASH=False
 
 AUTHENTICATION_BACKENDS = ['notifyme.authentication.AuthenticationBackend',]
+
+
+CELERY_BROKER_URL = 'amqp://localhost'
+CELERY_TIMEZONE='Asia/Kolkata'
+CELERY_BEAT_SCHEDULE= {
+    'send_notifications':{
+        'task':'dashboard.tasks.send_notifications',
+        'schedule': 30.0
+    },
+}

@@ -41,6 +41,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_student = models.BooleanField(default=False)
     is_instructor = models.BooleanField(default=False)
+    is_ta = models.BooleanField(default=False)
     date_joined=models.DateField(default=timezone.now)
     objects = UserManager()
     USERNAME_FIELD = 'username'
@@ -52,7 +53,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Student(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name="student_account", default=User.objects.filter(is_student="True"))
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name="student_account")
     registration_token=models.CharField(max_length=400, blank=True)
 
     def __str__(self):
@@ -65,11 +66,16 @@ class Instructor(models.Model):
     def __str__(self):
         return self.user.username
 
+class Ta(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name="ta_account")
+    def __str__(self):
+        return self.user.username
 
 class Course(models.Model):
     code = models.CharField(default='', max_length=10, primary_key=True)
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
     students = models.ManyToManyField(Student, blank=True)
+    tas = models.ManyToManyField(Ta, blank=True)
     date = models.DateTimeField(default=timezone.now)
     name = models.CharField(default='', max_length=100)
 
